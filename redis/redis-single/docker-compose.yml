@@ -7,7 +7,7 @@ services:
     ports:
       - 6379:6379
     command:
-      redis-server
+      redis-server --requirepass 123456
     # volumes:
     #   - ./conf/:/usr/local/etc/redis
     #   - ./data:/data
