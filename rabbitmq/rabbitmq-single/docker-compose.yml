@@ -4,7 +4,6 @@ services:
     image: rabbitmq:3.9.11-management
     restart: always
     container_name: rabbitmq
-    hostname: rabbitmq
     ports:
       - 15672:15672
       - 5672:5672
@@ -13,4 +12,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=123456
     # volumes:
     #   - ./data:/var/lib/rabbitmq
-    
+    deploy:
+      resources:
+        limits:
+          memory: 1024M

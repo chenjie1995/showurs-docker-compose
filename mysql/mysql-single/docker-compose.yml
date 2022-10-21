@@ -17,3 +17,7 @@ services:
     #    - "/home/docker_home/mysql_home/loc_single/conf:/etc/mysql"
     #    - "/home/docker_home/mysql_home/loc_single/files:/var/lib/mysql-files"
     #    - "/home/docker_home/mysql_home/loc_single/data/:/var/lib/mysql"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M

@@ -11,3 +11,7 @@ services:
     # volumes:
     #   - ./conf/:/usr/local/etc/redis
     #   - ./data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
