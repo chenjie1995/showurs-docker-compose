@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  es:
+    image: "elasticsearch:7.12.0"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - TAKE_FILE_OWNERSHIP=true
+      - discovery.type=single-node
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    container_name: elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL","curl -sS http://localhost:9200 ||exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - "/uino/elasticsearch/data:/usr/share/elasticsearch/data"
+      - "./conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+      - "/uino/elasticsearch/logs:/usr/share/elasticsearch/logs"
