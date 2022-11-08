@@ -1,0 +1,16 @@
+cluster.name: "es-cluster"
+network.host: 0.0.0.0
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-headers: Authorization
+
+discovery.seed_hosts: ["10.203.1.151","10.203.1.152","10.203.1.153"]
+discovery.zen.ping_timeout: 60s
+cluster.initial_master_nodes: ["10.203.1.151","10.203.1.152","10.203.1.153"]
+
+xpack.security.enabled: true
+xpack.license.self_generated.type: basic
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
