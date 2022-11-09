@@ -7,10 +7,11 @@ services:
     restart: always
     ports:
       - '${mongo_port1}:27017'
-    command: mongod --replSet ${the_rs} --shardsvr --port 27017  --oplogSize 16
+    command: mongod --config /data/db/mongo.conf
     volumes:
-      - ./conf/key.file:/data/configdb/key.file
-      - ./scripts/init-auth.sh:/docker-entrypoint-initdb.d/init-auth.sh
+      - ./conf/key.file:/data/db/key.file
+      - ./conf/mongo.conf:/data/db/mongo.conf
+      - /uino/mongo/mongo-1:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -24,9 +25,11 @@ services:
     restart: always
     ports:
       - '${mongo_port2}:27017'
-    command: mongod --replSet ${the_rs} --shardsvr --port 27017  --oplogSize 16
+    command: mongod --config /data/db/mongo.conf
     volumes:
-      - ./conf/key.file:/data/configdb/key.file
+      - ./conf/key.file:/data/db/key.file
+      - ./conf/mongo.conf:/data/db/mongo.conf
+      - /uino/mongo/mongo-2:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -40,9 +43,11 @@ services:
     restart: always
     ports:
       - '${mongo_port3}:27017'
-    command: mongod --replSet ${the_rs} --shardsvr --port 27017  --oplogSize 16
+    command: mongod --config /data/db/mongo.conf
     volumes:
-      - ./conf/key.file:/data/configdb/key.file
+      - ./conf/key.file:/data/db/key.file
+      - ./conf/mongo.conf:/data/db/mongo.conf
+      - /uino/mongo/mongo-3:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -56,9 +61,11 @@ services:
     restart: always
     ports:
       - '${mongo_config_port}:27017'
-    command: mongod --replSet ${rs_config} --configsvr --port 27017 --oplogSize 16
+    command: mongod --config /data/db/mongo-config.conf
     volumes:
-      - ./conf/key.file:/data/configdb/key.file
+      - ./conf/key.file:/data/db/key.file
+      - ./conf/mongo-config.conf:/data/db/mongo-config.conf
+      - /uino/mongo/mongo-config:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -72,9 +79,11 @@ services:
     restart: always
     ports:
       - '${mongos_port}:27017'
-    command: mongos --configdb cnf-serv/${host1}:${mongo_config_port},${host2}:${mongo_config_port},${host3}:${mongo_config_port} --port 27017 --bind_ip 0.0.0.0
+    command: mongos --config /data/db/mongos.conf
     volumes:
-      - ./conf/key.file:/data/configdb/key.file
+      - ./conf/key.file:/data/db/key.file
+      - ./conf/mongos.conf:/data/db/mongos.conf
+      - /uino/mongo/mongos:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -88,7 +97,6 @@ services:
     volumes:
       - ./scripts:/scripts
       - ./conf/key.file:/data/configdb/key.file
-    command: mongos --keyFile /data/configdb/key.file
     environment:
       - MONGO1=${the_host}
       - MONGO2=${the_host}

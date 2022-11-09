@@ -9,7 +9,7 @@ services:
     command: [--auth]
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_ROOT_PASSWORD: root123456
       MONGO_INITDB_DATABASE: cqjc
       MONGO_USERNAME: uino
       MONGO_PASSWORD: uino@mongo
