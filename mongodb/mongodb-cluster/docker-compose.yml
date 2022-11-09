@@ -1,0 +1,160 @@
+version: '3.8'
+services:
+  
+  mongo-1:
+    image: mongo:${mongo_version}
+    container_name: mongo-1
+    restart: always
+    ports:
+      - '${mongo_port1}:27017'
+    command: mongod --replSet ${the_rs} --shardsvr --port 27017  --oplogSize 16
+    volumes:
+      - ./conf/key.file:/data/configdb/key.file
+      - ./scripts/init-auth.sh:/docker-entrypoint-initdb.d/init-auth.sh
+    environment:
+      TZ: Asia/Shanghai
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  mongo-2:
+    image: mongo:${mongo_version}
+    container_name: mongo-2
+    restart: always
+    ports:
+      - '${mongo_port2}:27017'
+    command: mongod --replSet ${the_rs} --shardsvr --port 27017  --oplogSize 16
+    volumes:
+      - ./conf/key.file:/data/configdb/key.file
+    environment:
+      TZ: Asia/Shanghai
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  mongo-3:
+    image: mongo:${mongo_version}
+    container_name: mongo-3
+    restart: always
+    ports:
+      - '${mongo_port3}:27017'
+    command: mongod --replSet ${the_rs} --shardsvr --port 27017  --oplogSize 16
+    volumes:
+      - ./conf/key.file:/data/configdb/key.file
+    environment:
+      TZ: Asia/Shanghai
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+  
+  mongo-config:
+    image: mongo:${mongo_version}
+    container_name: mongo-config
+    restart: always
+    ports:
+      - '${mongo_config_port}:27017'
+    command: mongod --replSet ${rs_config} --configsvr --port 27017 --oplogSize 16
+    volumes:
+      - ./conf/key.file:/data/configdb/key.file
+    environment:
+      TZ: Asia/Shanghai
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+  
+  mongos:
+    image: mongo:${mongo_version}
+    container_name: mongos
+    restart: always
+    ports:
+      - '${mongos_port}:27017'
+    command: mongos --configdb cnf-serv/${host1}:${mongo_config_port},${host2}:${mongo_config_port},${host3}:${mongo_config_port} --port 27017 --bind_ip 0.0.0.0
+    volumes:
+      - ./conf/key.file:/data/configdb/key.file
+    environment:
+      TZ: Asia/Shanghai
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  mongo-setup:
+    container_name: mongo-setup
+    image: mongo:${mongo_version}
+    volumes:
+      - ./scripts:/scripts
+      - ./conf/key.file:/data/configdb/key.file
+    command: mongos --keyFile /data/configdb/key.file
+    environment:
+      - MONGO1=${the_host}
+      - MONGO2=${the_host}
+      - MONGO3=${the_host}
+      - PORT01=${mongo_port1}
+      - PORT02=${mongo_port2}
+      - PORT03=${mongo_port3}
+      - RS=${the_rs}
+      - TZ=Asia/Shanghai
+    entrypoint: ['sh', '/scripts/setup.sh']
+    
+  mongo-config-setup:
+    container_name: "mongo-config-setup"
+    image: mongo:${mongo_version}
+    volumes:
+      - ./scripts:/scripts
+    environment:
+      - MONGO1=${host1}
+      - MONGO2=${host2}
+      - MONGO3=${host3}
+      - RS=${rs_config}
+      - PORT=${mongo_config_port}
+      - TZ=Asia/Shanghai
+    entrypoint: ['sh', '/scripts/setup-config.sh']
+
+  mongo-shard-setup:
+    container_name: "mongo-shard-setup"
+    image: mongo:${mongo_version}
+    volumes:
+      - ./scripts:/scripts
+    environment:
+      - MONGOS=${the_host}
+      - MONGO1_1=${host1}
+      - MONGO1_2=${host1}
+      - MONGO1_3=${host1}
+      - MONGO2_1=${host2}
+      - MONGO2_2=${host2}
+      - MONGO2_3=${host2}
+      - MONGO3_1=${host3}
+      - MONGO3_2=${host3}
+      - MONGO3_3=${host3}
+      - RS1=${rs1}
+      - RS2=${rs2}
+      - RS3=${rs3}
+      - PORT=${mongos_port}
+      - PORT1=${mongo_port1}
+      - PORT2=${mongo_port2}
+      - PORT3=${mongo_port3}
+      - TZ=Asia/Shanghai
+    entrypoint: ['sh', '/scripts/init-shard.sh']
+
+  mongo-auth-setup:
+    container_name: "mongo-auth-setup"
+    image: mongo:${mongo_version}
+    volumes:
+      - ./scripts:/scripts
+    environment:
+      - MONGOS1=${host1}
+      - MONGOS_PORT=${mongos_port}
+      - MONGO_CONFIG1=${host1}
+      - MONGO_CONFIG_PORT=${mongo_config_port}
+      - MONGO1=${host1}
+      - MONGO2=${host2}
+      - MONGO3=${host3}
+      - MONGO_PORT1=${mongo_port1}
+      - MONGO_ROOT_USERNAME=${username}
+      - MONGO_ROOT_PASSWORD=${password}
+      - TZ=Asia/Shanghai
+    entrypoint: ['sh', '/scripts/init-auth.sh']

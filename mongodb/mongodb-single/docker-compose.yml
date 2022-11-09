@@ -2,7 +2,8 @@ version: '3.8'
 services:
   db:
     image: mongo
-    container_name: mongodb-container
+    container_name: mongodb
+    restart: always
     ports:
       - '27017:27017'
     command: [--auth]
