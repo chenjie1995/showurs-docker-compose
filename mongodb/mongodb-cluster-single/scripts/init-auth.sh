@@ -5,7 +5,7 @@ db.createUser({
   user: "root",
   pwd: "root123456",
   roles: [
-    { role: 'userAdminAnyDatabase', db: 'admin' }
+    { role: 'root', db: 'admin' }
   ]
 })
 db = db.getSiblingDB('cqjc')

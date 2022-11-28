@@ -11,7 +11,7 @@ services:
     volumes:
       - ./conf/key.file:/data/db/key.file
       - ./conf/mongo.conf:/data/db/mongo.conf
-      - /uino/mongo/mongo-1:/data/db
+      - /uino/minio/node2/data/mongo/mongo-1:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./conf/key.file:/data/db/key.file
       - ./conf/mongo-config.conf:/data/db/mongo-config.conf
-      - /uino/mongo/mongo-config:/data/db
+      - /uino/minio/node2/data/mongo/mongo-config:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -47,7 +47,7 @@ services:
     volumes:
       - ./conf/key.file:/data/db/key.file
       - ./conf/mongos.conf:/data/db/mongos.conf
-      - /uino/mongo/mongos:/data/db
+      - /uino/minio/node2/data/mongo/mongos:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
