@@ -11,7 +11,7 @@ services:
     volumes:
       - ./conf/key.file:/data/db/key.file
       - ./conf/mongo.conf:/data/db/mongo.conf
-      - /uino/minio/node2/data/mongo/mongo-1:/data/db
+      - /data/uino/mongo-1:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -19,17 +19,17 @@ services:
         limits:
           memory: 8G
   
-  mongo-config:
+  mongo-config-1:
     image: mongo:${mongo_version}
-    container_name: mongo-config
+    container_name: mongo-config-1
     restart: always
     ports:
-      - '${mongo_config_port}:27017'
+      - '${mongo_config_port1}:27017'
     command: mongod --config /data/db/mongo-config.conf
     volumes:
       - ./conf/key.file:/data/db/key.file
       - ./conf/mongo-config.conf:/data/db/mongo-config.conf
-      - /uino/minio/node2/data/mongo/mongo-config:/data/db
+      - /data/uino/mongo-config-1:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -37,17 +37,17 @@ services:
         limits:
           memory: 4G
   
-  mongos:
+  mongos-1:
     image: mongo:${mongo_version}
-    container_name: mongos
+    container_name: mongos-1
     restart: always
     ports:
-      - '${mongos_port}:27017'
+      - '${mongos_port1}:27017'
     command: mongos --config /data/db/mongos.conf
     volumes:
       - ./conf/key.file:/data/db/key.file
       - ./conf/mongos.conf:/data/db/mongos.conf
-      - /uino/minio/node2/data/mongo/mongos:/data/db
+      - /data/uino/mongos-1:/data/db
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -82,7 +82,7 @@ services:
       - MONGO2=${host2}
       - MONGO3=${host3}
       - RS=${rs_config}
-      - PORT=${mongo_config_port}
+      - PORT=${mongo_config_port1}
       - TZ=Asia/Shanghai
     entrypoint: ['sh', '/scripts/setup-config.sh']
 
@@ -105,7 +105,7 @@ services:
       - RS1=${rs1}
       - RS2=${rs2}
       - RS3=${rs3}
-      - PORT=${mongos_port}
+      - PORT=${mongos_port1}
       - PORT1=${mongo_port1}
       - PORT2=${mongo_port2}
       - PORT3=${mongo_port3}
@@ -119,9 +119,9 @@ services:
       - ./scripts:/scripts
     environment:
       - MONGOS1=${host1}
-      - MONGOS_PORT=${mongos_port}
+      - MONGOS_PORT=${mongos_port1}
       - MONGO_CONFIG1=${host1}
-      - MONGO_CONFIG_PORT=${mongo_config_port}
+      - MONGO_CONFIG_PORT=${mongo_config_port1}
       - MONGO1=${host1}
       - MONGO2=${host2}
       - MONGO3=${host3}
